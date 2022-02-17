@@ -1,18 +1,20 @@
 import React, { Component, useEffect, useState } from "react";
-import Ball from "./Ball";
+import Cell from "./Cell";
 
-import "./ball.css";
+import "./cell.css";
 
 const BALL_START_X = 5;
 const BALL_START_Y = 0;
-const TARGET_X = 100;
+const TARGET_X = 20;
 const TARGET_Y = 0;
+const BOARD_ROW = 40;
+const BOARD_COL = 20;
 
 let getBoard = () => {
   let board = [];
-  for (let y = 0; y < 120; y++) {
+  for (let y = 0; y < BOARD_COL; y++) {
     let currentX = [];
-    for (let x = 0; x < 100; x++) currentX.push(boardCell(x, y));
+    for (let x = 0; x < BOARD_ROW; x++) currentX.push(boardCell(y, x));
 
     board.push(currentX);
   }
@@ -33,11 +35,11 @@ let boardCell = (x, y) => {
 let wallCell = (board, x, y) => {
   let newBoard = board.slice();
   let cell = newBoard[x][y];
-  let wallCell = {
+  let wall = {
     ...cell,
-    isWall: True,
+    isWall: !cell.isWall,
   };
-  newBoard[x][y] = wallCell;
+  newBoard[x][y] = wall;
   return newBoard;
 };
 
@@ -49,6 +51,21 @@ let BouncingSimulator = () => {
     setBoard(getBoard());
   }, []);
 
+  let handleMouseDown = (x, y) => {
+    setBoard(wallCell(board, x, y));
+  };
+
+  let handleMouseUp = (x, y) => {
+    setMousePressed(false);
+  };
+
+  let handleMouseEnter = (x, y) => {
+    setBoard(wallCell(board, x, y));
+    setMousePressed(true);
+  };
+
+  // add ball current
+
   return (
     <div class="container">
       {board.map((x, xIndex) => {
@@ -57,12 +74,16 @@ let BouncingSimulator = () => {
             {x.map((cell, cellIndex) => {
               let { x, y, previousPath, isWall } = cell;
               return (
-                <Ball
+                <Cell
                   key={cellIndex}
                   x={x}
                   y={y}
                   previousPath={previousPath}
                   isWall={isWall}
+                  mouseIsPressed={mousePressed}
+                  onMouseDown={(x, y) => handleMouseDown(x, y)}
+                  // onMouseEnter={(x, y) => handleMouseEnter(x, y)}
+                  onMouseUp={() => handleMouseUp()}
                 />
               );
             })}

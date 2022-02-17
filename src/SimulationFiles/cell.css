@@ -1,0 +1,15 @@
+.cell {
+    width: 25px;
+    height: 25px;
+    outline: 1px solid blue;
+    display: inline-block;
+  }
+  
+  .cell-target {
+    background-color: red;
+  }
+  
+  .cell-start {
+    background-color: green;
+  }
+  
