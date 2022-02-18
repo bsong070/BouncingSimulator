@@ -4,8 +4,8 @@ import "./cell.css";
 export default class Cell extends Component {
   render() {
     const {
-      x,
-      y,
+      row,
+      col,
       isWall,
       atStart,
       atTarget,
@@ -24,10 +24,10 @@ export default class Cell extends Component {
 
     return (
       <div
-        id={`cell-${x}-${y}`}
+        id={`cell-${row}-${col}`}
         className={`cell ${classNameMod}`}
-        onMouseDown={() => onMouseDown(x, y)}
-        onMouseEnter={() => onMouseEnter(x, y)}
+        onMouseDown={() => onMouseDown(row, col)}
+        onMouseEnter={() => onMouseEnter(row, col)}
         onMouseUp={() => onMouseUp()}
       ></div>
     );

@@ -1,12 +1,12 @@
 .cell {
     width: 25px;
     height: 25px;
-    outline: 1px solid blue;
+    outline: 1px solid grey;
     display: inline-block;
   }
   
   .cell-target {
-    background-color: red;
+    background-color: black;
   }
   
   .cell-start {

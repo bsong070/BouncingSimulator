@@ -1,45 +1,49 @@
 import React, { Component, useEffect, useState } from "react";
 import Cell from "./Cell";
+import ballPath from "./ballPath";
 
 import "./cell.css";
 
-const BALL_START_X = 5;
-const BALL_START_Y = 0;
-const TARGET_X = 20;
-const TARGET_Y = 0;
+const BALL_START_COL = 5;
+const BALL_START_ROW = 10;
+const TARGET_COL = 1;
+const TARGET_ROW = 30;
 const BOARD_ROW = 40;
 const BOARD_COL = 20;
+const GRAVITY = 1;
+const WIND = 2;
 
 let getBoard = () => {
   let board = [];
-  for (let y = 0; y < BOARD_COL; y++) {
-    let currentX = [];
-    for (let x = 0; x < BOARD_ROW; x++) currentX.push(boardCell(y, x));
+  for (let row = 0; row < BOARD_COL; row++) {
+    let currentArray = [];
+    for (let col = 0; col < BOARD_ROW; col++)
+      currentArray.push(boardCell(row, col));
 
-    board.push(currentX);
+    board.push(currentArray);
   }
   return board;
 };
 
-let boardCell = (x, y) => {
+let boardCell = (col, row) => {
   return {
-    x,
-    y,
-    atStart: x == BALL_START_X && y == BALL_START_Y,
-    atTarget: x == TARGET_X && y == TARGET_Y,
+    col,
+    row,
+    atStart: col == BALL_START_COL && row == BALL_START_ROW,
+    atTarget: col == TARGET_COL && row == TARGET_ROW,
     previousPath: false,
     isWall: false,
   };
 };
 
-let wallCell = (board, x, y) => {
+let wallCell = (board, row, col) => {
   let newBoard = board.slice();
-  let cell = newBoard[x][y];
+  let cell = newBoard[row][col];
   let wall = {
     ...cell,
     isWall: !cell.isWall,
   };
-  newBoard[x][y] = wall;
+  newBoard[row][col] = wall;
   return newBoard;
 };
 
@@ -51,38 +55,41 @@ let BouncingSimulator = () => {
     setBoard(getBoard());
   }, []);
 
-  let handleMouseDown = (x, y) => {
-    setBoard(wallCell(board, x, y));
+  let handleMouseDown = (row, col) => {
+    setBoard(wallCell(board, row, col));
+    setMousePressed(true);
   };
 
-  let handleMouseUp = (x, y) => {
+  let handleMouseUp = () => {
     setMousePressed(false);
   };
 
-  let handleMouseEnter = (x, y) => {
-    setBoard(wallCell(board, x, y));
-    setMousePressed(true);
+  let handleMouseEnter = (row, col) => {
+    if (!mousePressed) return;
+    setBoard(wallCell(board, row, col));
   };
 
   // add ball current
 
   return (
     <div class="container">
-      {board.map((x, xIndex) => {
+      {board.map((row, rowIndex) => {
         return (
-          <div key={xIndex}>
-            {x.map((cell, cellIndex) => {
-              let { x, y, previousPath, isWall } = cell;
+          <div key={rowIndex}>
+            {row.map((cell, cellIndex) => {
+              let { row, col, previousPath, isWall, atStart, atTarget } = cell;
               return (
                 <Cell
                   key={cellIndex}
-                  x={x}
-                  y={y}
+                  row={row}
+                  col={col}
+                  atStart={atStart}
+                  atTarget={atTarget}
                   previousPath={previousPath}
                   isWall={isWall}
                   mouseIsPressed={mousePressed}
-                  onMouseDown={(x, y) => handleMouseDown(x, y)}
-                  // onMouseEnter={(x, y) => handleMouseEnter(x, y)}
+                  onMouseDown={(row, col) => handleMouseDown(row, col)}
+                  onMouseEnter={(row, col) => handleMouseEnter(row, col)}
                   onMouseUp={() => handleMouseUp()}
                 />
               );
@@ -90,6 +97,23 @@ let BouncingSimulator = () => {
           </div>
         );
       })}
+      <button
+        onClick={() =>
+          ballPath(
+            board,
+            board[BALL_START_COL][BALL_START_ROW],
+            board[TARGET_COL][TARGET_ROW],
+            GRAVITY,
+            WIND
+          )
+        }
+      >
+        Start
+      </button>
+
+      <button onClick={() => console.log(board.length, board[0].length)}>
+        consolelog
+      </button>
     </div>
   );
 };
