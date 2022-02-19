@@ -1,11 +1,13 @@
 let ballPath = (board, ballPosition, targetPosition, gravity, wind) => {
   //   board.length 20
   //   board[0].length 40
-  console.log(ballPosition);
+  let pathHistory = [];
   while (
     ballPosition.row != targetPosition.row ||
     ballPosition.col != targetPosition.col
   ) {
+    ballPosition.row -= gravity;
+    ballPosition.col -= wind;
     if (
       ballPosition.row > board.length * 2 ||
       ballPosition.col > board[0].length ||
@@ -14,11 +16,10 @@ let ballPath = (board, ballPosition, targetPosition, gravity, wind) => {
     ) {
       break;
     }
-    ballPosition.row -= gravity;
-    ballPosition.col -= wind;
-
-    console.log(ballPosition);
+    board[ballPosition.col][ballPosition.row].isBall = true;
+    pathHistory.push(board[ballPosition.col][ballPosition.row]);
   }
+  return pathHistory;
 };
 
 export default ballPath;

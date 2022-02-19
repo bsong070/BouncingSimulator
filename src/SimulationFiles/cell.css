@@ -1,15 +1,23 @@
 .cell {
-    width: 25px;
-    height: 25px;
-    outline: 1px solid grey;
-    display: inline-block;
-  }
+  width: 25px;
+  height: 25px;
+  outline: 1px solid grey;
+  display: inline-block;
+}
+
+.cell-target {
+  background-color: black;
+}
+
+.ball {
+  background-color: green;
+  border-radius: 50%;
+}
+
+
+
   
-  .cell-target {
-    background-color: black;
-  }
-  
-  .cell-start {
-    background-color: green;
+  .cell-wall {
+    background-color: rgb(12, 53, 71);
   }
   

@@ -7,15 +7,15 @@ export default class Cell extends Component {
       row,
       col,
       isWall,
-      atStart,
+      isBall,
       atTarget,
       onMouseDown,
       onMouseEnter,
       onMouseUp,
     } = this.props;
 
-    let classNameMod = atStart
-      ? "cell-start"
+    let classNameMod = isBall
+      ? "ball"
       : atTarget
       ? "cell-target"
       : isWall
