@@ -1,7 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import Cell from "./Cell";
 import ballPath from "./ballPath";
-import angleDropDown from "./AngleDropdrop";
 
 import "./cell.css";
 
@@ -11,9 +10,19 @@ const BALL_START_COL = 10;
 const BALL_START_ROW = 18;
 const TARGET_COL = 35;
 const TARGET_ROW = 18;
-const GRAVITY = 1;
-const WIND = 2;
 
+const GRAVITY = 1; // using 1 instead of 9.8 to for cleaner visualization
+const WIND = 0; // will act as horizontal acceleration
+const FRAME = 25; // will act as time
+const VELOCITYX = 0;
+const VELOCITYY = 0;
+// const INITIALANGLEMULTIPLIER = 3; // to set initial angle to 90
+// const DEGREETORADIAN = Math.PI / 180;
+// const ANGLE = 30;
+
+let visualizationDelay;
+
+// creates the board
 let getBoard = () => {
   let board = [];
   for (let col = 0; col < BOARD_COL; col++) {
@@ -29,6 +38,7 @@ let getBoard = () => {
   return board;
 };
 
+//sets properties for each cell on board
 let boardCell = (col, row, isEdge) => {
   if (isEdge) {
     return {
@@ -50,6 +60,7 @@ let boardCell = (col, row, isEdge) => {
   };
 };
 
+//change a cell to a wall
 let wallCell = (board, row, col) => {
   let newBoard = board.slice();
   let cell = newBoard[row][col];
@@ -92,17 +103,50 @@ let BouncingSimulator = () => {
       WIND
     );
     for (let i = 0; i < pathHistory.length; i++) {
-      setTimeout(() => {
+      visualizationDelay = setTimeout(() => {
         document.getElementById(
           `cell-${pathHistory[i].col}-${pathHistory[i].row}`
         ).className = "ball";
-      }, 10 * i);
+      }, 20 * i);
     }
   };
 
-  let setMultiplier = (event) => {
+  let [increment, setIncrement] = useState({
+    gravity: GRAVITY,
+    wind: WIND,
+    frames: FRAME,
+    velocityX: VELOCITYX,
+    velocityY: VELOCITYY,
+    // angle: ANGLE * INITIALANGLEMULTIPLIER,
+  });
+
+  let setSlider = (event) => {
     let { id, value } = event.target;
-    console.log(id, value);
+    // if (id == "angle") {
+    //   setIncrement((prevState) => ({
+    //     ...prevState,
+    //     [id]: value * ANGLE,
+    //   }));
+    // } else {
+    setIncrement((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+
+  // clear states to initial and stops visualize if in progress
+  let reset = () => {
+    setIncrement = {
+      gravity: GRAVITY,
+      wind: WIND,
+      frames: FRAME,
+      velocityX: VELOCITYX,
+      velocityY: VELOCITYY,
+      // angle: ANGLE * INITIALANGLEMULTIPLIER,
+    };
+    getBoard();
+    setMousePressed(false);
+    clearTimeout(visualizationDelay);
   };
 
   // add ball current
@@ -134,7 +178,7 @@ let BouncingSimulator = () => {
         );
       })}
       <label for="customRange2" class="form-label">
-        <h3>Gravity: {GRAVITY}</h3>
+        <h3>Gravity: {increment.gravity}</h3>
       </label>
       <input
         type="range"
@@ -143,22 +187,23 @@ let BouncingSimulator = () => {
         max="2"
         id="gravity"
         defaultValue="1"
-        onChange={() => setMultiplier}
+        onChange={setSlider}
       ></input>
 
       <label for="customRange2" class="form-label">
-        Air
+        <h3>Wind: {increment.wind}</h3>
       </label>
       <input
         type="range"
         class="form-range"
         min="-2"
         max="2"
-        id="air"
+        id="wind"
         defaultValue="0"
+        onChange={setSlider}
       ></input>
       <label for="customRange2" class="form-label">
-        Frames
+        <h3>Frames: {increment.frames}</h3>
       </label>
       <input
         type="range"
@@ -167,34 +212,42 @@ let BouncingSimulator = () => {
         max="49"
         id="frames"
         defaultValue="25"
+        onChange={setSlider}
       ></input>
       <label for="customRange2" class="form-label">
-        Initial Velocity
+        <h3>Velocity X: {increment.velocityX}</h3>
       </label>
       <input
         type="range"
         class="form-range"
         min="-2"
         max="2"
-        id="velocity"
+        id="velocityX"
         defaultValue="0"
+        onChange={setSlider}
       ></input>
       <label for="customRange2" class="form-label">
-        Angle
+        <h3>Velocity Y: {increment.velocityY}</h3>
       </label>
       <input
         type="range"
         class="form-range"
         min="0"
         max="6"
-        id="angle"
+        id="velocityY"
         defaultValue="3"
+        onChange={setSlider}
       ></input>
 
-      <button onClick={() => visualizeBall()}>Start</button>
-
-      <button onClick={() => console.log(board.length, board[0].length)}>
-        consolelog
+      <button
+        type="button"
+        class="btn btn-primary"
+        onClick={() => visualizeBall()}
+      >
+        Start
+      </button>
+      <button type="button" class="btn btn-primary" onClick={() => reset()}>
+        Reset
       </button>
     </div>
   );
