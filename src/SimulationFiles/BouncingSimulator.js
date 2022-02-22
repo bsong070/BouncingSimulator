@@ -76,6 +76,15 @@ let BouncingSimulator = () => {
   let [board, setBoard] = useState([]);
   let [mousePressed, setMousePressed] = useState(false);
 
+  let [increment, setIncrement] = useState({
+    gravity: GRAVITY,
+    wind: WIND,
+    frames: FRAME,
+    velocityX: VELOCITYX,
+    velocityY: VELOCITYY,
+    // angle: ANGLE * INITIALANGLEMULTIPLIER,
+  });
+
   useEffect(() => {
     setBoard(getBoard());
   }, []);
@@ -83,6 +92,7 @@ let BouncingSimulator = () => {
   let handleMouseDown = (row, col) => {
     setBoard(wallCell(board, row, col));
     setMousePressed(true);
+    console.log("x:", col, "y:", row);
   };
 
   let handleMouseUp = () => {
@@ -93,6 +103,12 @@ let BouncingSimulator = () => {
     if (!mousePressed) return;
     setBoard(wallCell(board, row, col));
   };
+
+  //need to see order of board
+  let startAboveWall =
+    board[BALL_START_ROW + 1][BALL_START_COL].isWall && increment.velocityY == 0
+      ? true
+      : false;
 
   let visualizeBall = () => {
     let pathHistory = ballPath(
@@ -105,7 +121,8 @@ let BouncingSimulator = () => {
       increment.wind,
       increment.frames,
       increment.velocityX,
-      increment.velocityY
+      increment.velocityY,
+      startAboveWall
     );
     for (let i = 0; i < pathHistory.length; i++) {
       visualizationDelay = setTimeout(() => {
@@ -115,15 +132,6 @@ let BouncingSimulator = () => {
       }, 300 * i);
     }
   };
-
-  let [increment, setIncrement] = useState({
-    gravity: GRAVITY,
-    wind: WIND,
-    frames: FRAME,
-    velocityX: VELOCITYX,
-    velocityY: VELOCITYY,
-    // angle: ANGLE * INITIALANGLEMULTIPLIER,
-  });
 
   let setSlider = (event) => {
     let { id, value } = event.target;
