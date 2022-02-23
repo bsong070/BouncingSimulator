@@ -250,8 +250,8 @@ let BouncingSimulator = () => {
       <input
         type="range"
         class="form-range"
-        min="-2"
-        max="2"
+        min="-3"
+        max="3"
         id="velocityY"
         defaultValue="0"
         onChange={setSlider}

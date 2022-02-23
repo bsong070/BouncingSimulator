@@ -190,27 +190,20 @@ let findClosestNonWall = (
         console.log("try X:", ballPositionX, "Y:", ballPositionY);
       }
     } catch (error) {
-      if (
-        board[Math.round(initialBallPositionY + absDeltaPosY / i)][
-          Math.round(initialBallPositionX + absDeltaPosX / i)
-        ].isWall
-      ) {
-        ballPositionY = Math.round(
-          initialBallPositionY + absDeltaPosY / (i + 1)
-        );
-        ballPositionX = Math.round(
-          initialBallPositionX + absDeltaPosX / (i + 1)
-        );
-        console.log(" catch X:", ballPositionX, "Y:", ballPositionY);
-      }
+      ballPositionY = Math.round(initialBallPositionY + absDeltaPosY / (i + 1));
+      ballPositionX = Math.round(initialBallPositionX + absDeltaPosX / (i + 1));
     } finally {
-      if (
-        i == maxDelta - 1 &&
-        board[Math.round(initialBallPositionY + absDeltaPosY / i)][
-          Math.round(initialBallPositionY + absDeltaPosY / i)
-        ].isWall
-      ) {
-        return [initialBallPositionX, initialBallPositionY];
+      try {
+        if (
+          i == maxDelta - 1 &&
+          board[Math.round(initialBallPositionY + absDeltaPosY / i)][
+            Math.round(initialBallPositionY + absDeltaPosY / i)
+          ].isWall
+        )
+          return [initialBallPositionX, initialBallPositionY];
+      } catch (error) {
+        if (i == maxDelta - 1)
+          return [initialBallPositionX, initialBallPositionY];
       }
 
       console.log(
@@ -224,15 +217,15 @@ let findClosestNonWall = (
     }
   }
   // last check to avoid out of bounds
-  if (
-    ballPositionX < 0 ||
-    ballPositionX >= board.length ||
-    ballPositionY < 0 ||
-    ballPositionY >= board[0].length
-  ) {
-    ballPositionX = initialBallPositionX;
-    ballPositionY = initialBallPositionY;
-  }
+  // if (
+  //   ballPositionX < 0 ||
+  //   ballPositionX >= board.length ||
+  //   ballPositionY < 0 ||
+  //   ballPositionY >= board[0].length
+  // ) {
+  //   ballPositionX = initialBallPositionX;
+  //   ballPositionY = initialBallPositionY;
+  // }
   return [ballPositionX, ballPositionY];
 };
 
@@ -275,23 +268,23 @@ let velocityAfterWall = (
   startAboveWall
 ) => {
   let isOutOfBound;
-  // if (
-  //   ballPositionY >= board[0].length ||
-  //   ballPositionX >= board.length ||
-  //   ballPositionY < 0 ||
-  //   ballPositionX < 0
-  // ) {
-  //   console.log("left board");
-  //   isOutOfBound = true;
+  if (
+    ballPositionY >= board[0].length ||
+    ballPositionX >= board.length ||
+    ballPositionY < 0 ||
+    ballPositionX < 0
+  ) {
+    console.log("left board");
+    isOutOfBound = true;
 
-  //   return [
-  //     ballPositionX,
-  //     ballPositionY,
-  //     velocityXNoWall,
-  //     velocityYNoWall,
-  //     isOutOfBound,
-  //   ];
-  // }
+    return [
+      ballPositionX,
+      ballPositionY,
+      velocityXNoWall,
+      velocityYNoWall,
+      isOutOfBound,
+    ];
+  }
   // if leaves the board, end
 
   // will use this in the edge case the ball jumps over a wall
