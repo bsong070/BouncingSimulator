@@ -111,7 +111,7 @@ let ballPath = (
       "dy final",
       ballPositionRow
     );
-    console.log("outofbound:", isOutOfBound);
+    // console.log("outofbound:", isOutOfBound);
 
     // use distance formula to determine velocity final, CANNOT be dependent on time else use velocity from time
 
@@ -160,16 +160,82 @@ let findClosestNonWall = (
   let absDeltaPosY = Math.abs(ballPositionY - initialBallPositionY);
   let maxDelta = Math.max(absDeltaPosX, absDeltaPosY);
 
-  for (let i = maxDelta; i > 0; i--) {
-    if (
-      board[Math.round(ballPositionY / i)][Math.round(ballPositionX / i)].isWall
-    ) {
-      ballPositionY = Math.round(ballPositionY / i);
-      ballPositionX = Math.round(ballPositionX / i);
+  // need for reference to final position without wall to use to calculate new position, if wall
+  let tempBallPositionX = ballPositionX;
+  let tempBallPositionY = ballPositionY;
+
+  // will iterate from final position to initial position
+  for (let i = 1; i < maxDelta; i++) {
+    console.log(initialBallPositionX, initialBallPositionY);
+    console.log(
+      "X:",
+      Math.round(initialBallPositionX + absDeltaPosX / i),
+      "Y:",
+      Math.round(initialBallPositionY + absDeltaPosY / i)
+    );
+
+    try {
+      if (
+        board[Math.round(initialBallPositionY + absDeltaPosY / i)][
+          Math.round(initialBallPositionX + absDeltaPosX / i)
+        ].isWall
+      ) {
+        ballPositionY = Math.round(
+          initialBallPositionY + absDeltaPosY / (i + 1)
+        );
+        ballPositionX = Math.round(
+          initialBallPositionX + absDeltaPosX / (i + 1)
+        );
+
+        console.log("try X:", ballPositionX, "Y:", ballPositionY);
+      }
+    } catch (error) {
+      if (
+        board[Math.round(initialBallPositionY + absDeltaPosY / i)][
+          Math.round(initialBallPositionX + absDeltaPosX / i)
+        ].isWall
+      ) {
+        ballPositionY = Math.round(
+          initialBallPositionY + absDeltaPosY / (i + 1)
+        );
+        ballPositionX = Math.round(
+          initialBallPositionX + absDeltaPosX / (i + 1)
+        );
+        console.log(" catch X:", ballPositionX, "Y:", ballPositionY);
+      }
+    } finally {
+      if (
+        i == maxDelta - 1 &&
+        board[Math.round(initialBallPositionY + absDeltaPosY / i)][
+          Math.round(initialBallPositionY + absDeltaPosY / i)
+        ].isWall
+      ) {
+        return [initialBallPositionX, initialBallPositionY];
+      }
+
+      console.log(
+        "finally X:",
+        ballPositionX,
+        "Y:",
+        ballPositionY,
+        "initial y:",
+        initialBallPositionY
+      );
     }
+  }
+  // last check to avoid out of bounds
+  if (
+    ballPositionX < 0 ||
+    ballPositionX >= board.length ||
+    ballPositionY < 0 ||
+    ballPositionY >= board[0].length
+  ) {
+    ballPositionX = initialBallPositionX;
+    ballPositionY = initialBallPositionY;
   }
   return [ballPositionX, ballPositionY];
 };
+
 // let findClosestNonWall = (
 //   board,
 //   initialBallPositionX,
@@ -184,7 +250,6 @@ let findClosestNonWall = (
 //   let maxDelta = Math.max(absDeltaPosX, absDeltaPosY);
 
 //   for (let i = maxDelta; i > 0; i--) {
-//     console.log(Math.round(ballPositionX / i), Math.round(ballPositionY / i));
 //     if (
 //       board[Math.round(ballPositionY / i)][Math.round(ballPositionX / i)].isWall
 //     ) {
@@ -192,6 +257,7 @@ let findClosestNonWall = (
 //       ballPositionX = Math.round(ballPositionX / i);
 //     }
 //   }
+//   return [ballPositionX, ballPositionY];
 // };
 
 let velocityAfterWall = (
@@ -208,37 +274,38 @@ let velocityAfterWall = (
   wind,
   startAboveWall
 ) => {
-  let isOutOfBound = true;
-  if (
-    ballPositionY >= board[0].length ||
-    ballPositionX >= board.length ||
-    ballPositionY < 0 ||
-    ballPositionX < 0
-  ) {
-    console.log("left board");
+  let isOutOfBound;
+  // if (
+  //   ballPositionY >= board[0].length ||
+  //   ballPositionX >= board.length ||
+  //   ballPositionY < 0 ||
+  //   ballPositionX < 0
+  // ) {
+  //   console.log("left board");
+  //   isOutOfBound = true;
 
-    return [
-      ballPositionX,
-      ballPositionY,
-      velocityXNoWall,
-      velocityYNoWall,
-      isOutOfBound,
-    ];
-  }
+  //   return [
+  //     ballPositionX,
+  //     ballPositionY,
+  //     velocityXNoWall,
+  //     velocityYNoWall,
+  //     isOutOfBound,
+  //   ];
+  // }
   // if leaves the board, end
+
+  // will use this in the edge case the ball jumps over a wall
+  // see case 10
+  [ballPositionX, ballPositionY] = findClosestNonWall(
+    board,
+    initialBallPositionX,
+    initialBallPositionY,
+    ballPositionX,
+    ballPositionY
+  );
 
   //*** in this board, right / down are positive, up / left are negative ***
   if (board[ballPositionY][ballPositionX].isWall) {
-    // will use this in the edge case the ball jumps over a wall
-    // see case 10
-    [ballPositionX, ballPositionY] = findClosestNonWall(
-      board,
-      initialBallPositionX,
-      initialBallPositionY,
-      ballPositionX,
-      ballPositionY
-    );
-
     //Case 1: (-x, +y) (bottom-left)
     if (velocityX < 0 && velocityY > 0) {
       console.log("case 1");
@@ -250,40 +317,48 @@ let velocityAfterWall = (
         board[ballPositionY][ballPositionX - 1].isWall &&
         board[ballPositionY + 1][ballPositionX].isWall
       ) {
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else if (board[ballPositionY][ballPositionX - 1].isWall) {
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
     }
     //Case 2: (+x, +y) (bottom-right)
     else if (velocityX > 0 && velocityY > 0) {
@@ -294,40 +369,48 @@ let velocityAfterWall = (
         ballPositionY -= 1;
       }
       if (board.isWall && board[ballPositionY + 1][ballPositionX].isWall) {
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else if (board[ballPositionY][ballPositionX + 1].isWall) {
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
     }
     //Case 3: (+x, -y) (top-right)
     else if (velocityX > 0 && velocityY < 0) {
@@ -341,40 +424,48 @@ let velocityAfterWall = (
         board[ballPositionY][ballPositionX + 1].isWall &&
         board[ballPositionY - 1][ballPositionX].isWall
       ) {
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else if (board[ballPositionY][ballPositionX + 1].isWall) {
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
     }
 
     //Case 4: (-x, -y) (top-left)
@@ -389,40 +480,48 @@ let velocityAfterWall = (
         board[ballPositionY][ballPositionX - 1].isWall &&
         board[ballPositionY - 1][ballPositionX].isWall
       ) {
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else if (board[ballPositionY][ballPositionX - 1].isWall) {
-        velocityY = -velocityFinal(
-          velocityY,
-          wind,
-          initialBallPositionY,
-          ballPositionY,
-          true,
-          startAboveWall
-        );
+        velocityY =
+          -0.8 *
+          velocityFinal(
+            velocityY,
+            wind,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
       } else
-        velocityX = -velocityFinal(
-          velocityX,
-          gravity,
-          initialBallPositionX,
-          ballPositionX,
-          false,
-          startAboveWall
-        );
+        velocityX =
+          -0.8 *
+          velocityFinal(
+            velocityX,
+            gravity,
+            initialBallPositionX,
+            ballPositionX,
+            false,
+            startAboveWall
+          );
     }
     //Case 5: (+x, 0) (right) and gravity == 0
     else if (velocityX > 0 && velocityY == 0 && gravity == 0) {
@@ -431,22 +530,26 @@ let velocityAfterWall = (
       while (board[ballPositionY][ballPositionX].isWall) {
         ballPositionX -= 1;
       }
-      velocityX = -velocityFinal(
-        velocityX,
-        gravity,
-        initialBallPositionX,
-        ballPositionX,
-        false,
-        startAboveWall
-      ); // goes correct direction without -
-      velocityY = -velocityFinal(
-        velocityY,
-        gravity,
-        initialBallPositionY,
-        ballPositionY,
-        true,
-        startAboveWall
-      );
+      velocityX =
+        -0.8 *
+        velocityFinal(
+          velocityX,
+          gravity,
+          initialBallPositionX,
+          ballPositionX,
+          false,
+          startAboveWall
+        ); // goes correct direction without -
+      velocityY =
+        -0.8 *
+        velocityFinal(
+          velocityY,
+          gravity,
+          initialBallPositionY,
+          ballPositionY,
+          true,
+          startAboveWall
+        );
     }
     //Case 6: (-x, 0) (left)
     else if (velocityX < 0 && velocityY == 0 && gravity == 0) {
@@ -456,14 +559,16 @@ let velocityAfterWall = (
       while (board[ballPositionY][ballPositionX].isWall) {
         ballPositionX += 1;
       }
-      velocityX = velocityFinal(
-        velocityX,
-        gravity,
-        initialBallPositionX,
-        ballPositionX,
-        false,
-        startAboveWall
-      );
+      velocityX =
+        0.8 *
+        velocityFinal(
+          velocityX,
+          gravity,
+          initialBallPositionX,
+          ballPositionX,
+          false,
+          startAboveWall
+        );
     }
     //Case 7: (0, +y) (down)
     else if (velocityX == 0 && velocityY >= 0) {
@@ -472,14 +577,16 @@ let velocityAfterWall = (
       while (board[ballPositionY][ballPositionX].isWall) {
         ballPositionY -= 1;
       }
-      velocityY = -velocityFinal(
-        velocityY,
-        wind,
-        initialBallPositionY,
-        ballPositionY,
-        true,
-        startAboveWall
-      );
+      velocityY =
+        -0.8 *
+        velocityFinal(
+          velocityY,
+          wind,
+          initialBallPositionY,
+          ballPositionY,
+          true,
+          startAboveWall
+        );
     }
     //Case 8: (0, -y) (up)
     else if (velocityX == 0 && velocityY < 0) {
@@ -488,14 +595,16 @@ let velocityAfterWall = (
       while (board[ballPositionY][ballPositionX].isWall) {
         ballPositionY += 1;
       }
-      velocityY = -velocityFinal(
-        velocityY,
-        wind,
-        initialBallPositionY,
-        ballPositionY,
-        true,
-        startAboveWall
-      );
+      velocityY =
+        0.8 *
+        velocityFinal(
+          velocityY,
+          wind,
+          initialBallPositionY,
+          ballPositionY,
+          true,
+          startAboveWall
+        );
     }
     //Case 9: (+x, 0) (right) and gravity != 0
     else if (velocityX > 0 && velocityY == 0) {
@@ -505,48 +614,57 @@ let velocityAfterWall = (
         ballPositionX -= 1;
         ballPositionY -= 1; //new
       }
-      velocityX = -velocityFinal(
-        velocityX,
-        gravity,
-        initialBallPositionX,
-        ballPositionX,
-        false,
-        startAboveWall
-      ); // goes correct direction without -
-      velocityY = -velocityFinal(
-        velocityY,
-        gravity,
-        initialBallPositionY,
-        ballPositionY,
-        true,
-        startAboveWall
-      );
+      velocityX =
+        -0.8 *
+        velocityFinal(
+          velocityX,
+          gravity,
+          initialBallPositionX,
+          ballPositionX,
+          false,
+          startAboveWall
+        ); // goes correct direction without -
+      velocityY =
+        -0.8 *
+        velocityFinal(
+          velocityY,
+          gravity,
+          initialBallPositionY,
+          ballPositionY,
+          true,
+          startAboveWall
+        );
     }
     //Case 10: (-x, 0) (left) and gravity != 0
     else if (velocityX < 0 && velocityY == 0) {
       // working, add wind or gravity or wall?
       console.log("case 10");
+      console.log(velocityX);
 
       while (board[ballPositionY][ballPositionX].isWall) {
         // ballPositionX += 1;
         ballPositionY -= 1;
       }
-      velocityX = -velocityFinal(
-        velocityX,
-        gravity,
-        initialBallPositionX,
-        ballPositionX,
-        false,
-        startAboveWall
-      );
-      velocityY = -velocityFinal(
-        velocityY,
-        gravity,
-        initialBallPositionY,
-        ballPositionY,
-        true,
-        startAboveWall
-      );
+      velocityX =
+        0.8 *
+        velocityFinal(
+          velocityX,
+          gravity,
+          initialBallPositionX,
+          ballPositionX,
+          false,
+          startAboveWall
+        );
+      velocityY =
+        -0.8 *
+        velocityFinal(
+          velocityY,
+          gravity,
+          initialBallPositionY,
+          ballPositionY,
+          true,
+          startAboveWall
+        );
     }
   }
   isOutOfBound = false;

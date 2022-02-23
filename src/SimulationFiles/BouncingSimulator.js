@@ -57,6 +57,7 @@ let boardCell = (col, row, isEdge) => {
     atTarget: col == TARGET_COL && row == TARGET_ROW,
     previousPath: false,
     isWall: false,
+    aboveWall: false, // will use this to determine if ball stays at 0 velocity permanently
   };
 };
 
@@ -64,10 +65,17 @@ let boardCell = (col, row, isEdge) => {
 let wallCell = (board, row, col) => {
   let newBoard = board.slice();
   let cell = newBoard[row][col];
-  let wall = {
-    ...cell,
-    isWall: !cell.isWall,
-  };
+  let wall =
+    row == BALL_START_ROW + 1
+      ? {
+          ...cell,
+          isWall: !cell.isWall,
+          aboveWall: true,
+        }
+      : {
+          ...cell,
+          isWall: !cell.isWall,
+        };
   newBoard[row][col] = wall;
   return newBoard;
 };
@@ -104,12 +112,6 @@ let BouncingSimulator = () => {
     setBoard(wallCell(board, row, col));
   };
 
-  //need to see order of board
-  let startAboveWall =
-    board[BALL_START_ROW + 1][BALL_START_COL].isWall && increment.velocityY == 0
-      ? true
-      : false;
-
   let visualizeBall = () => {
     let pathHistory = ballPath(
       board,
@@ -122,7 +124,7 @@ let BouncingSimulator = () => {
       increment.frames,
       increment.velocityX,
       increment.velocityY,
-      startAboveWall
+      board[BALL_START_ROW + 1][BALL_START_COL].aboveWall
     );
     for (let i = 0; i < pathHistory.length; i++) {
       visualizationDelay = setTimeout(() => {
