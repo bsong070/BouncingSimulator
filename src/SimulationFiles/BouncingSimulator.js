@@ -153,6 +153,8 @@ let BouncingSimulator = () => {
 
   // clear states to initial and stops visualize if in progress
   let reset = () => {
+    clearTimeout(visualizationDelay);
+
     setIncrement({
       gravity: GRAVITY,
       wind: WIND,
@@ -161,9 +163,8 @@ let BouncingSimulator = () => {
       velocityY: VELOCITYY,
       // angle: ANGLE * INITIALANGLEMULTIPLIER,
     });
-    getBoard();
+    setBoard(getBoard());
     setMousePressed(false);
-    clearTimeout(visualizationDelay);
   };
 
   // add ball current
