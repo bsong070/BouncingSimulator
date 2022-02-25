@@ -59,6 +59,8 @@ let ballPath = (
     let initialBallPositionCol = ballPositionCol;
     let initialBallPositionRow = ballPositionRow;
 
+    console.log("xx", initialBallPositionRow, initialBallPositionCol);
+
     ballPositionRow = position(
       initialBallPositionRow,
       velocityY,
@@ -66,6 +68,8 @@ let ballPath = (
       time
     );
     ballPositionCol = position(initialBallPositionCol, velocityX, wind, time);
+
+    console.log("xxxx", ballPositionRow, ballPositionCol);
 
     //check for out of bounds and end if true
 
@@ -159,16 +163,59 @@ let findClosestNonWall = (
   let deltaPosY = ballPositionY - initialBallPositionY;
   let maxDelta = Math.max(Math.abs(deltaPosX), Math.max(deltaPosY));
 
+  // edge case, bottom right at start going 1 tile right
+  if (
+    deltaPosX == 1 &&
+    deltaPosY == 1 &&
+    board[Math.round(initialBallPositionY + 1)][
+      Math.round(initialBallPositionX + 1)
+    ].isWall
+  )
+    return [initialBallPositionX, initialBallPositionY];
+
+  // edge case, bottom left at start going 1 tile bottom left
+  if (
+    deltaPosX == -1 &&
+    deltaPosY == 1 &&
+    board[Math.round(initialBallPositionY + 1)][
+      Math.round(initialBallPositionX - 1)
+    ].isWall
+  )
+    return [initialBallPositionX, initialBallPositionY];
+
+  // edge case, top left at start going 1 tile top left
+  if (
+    deltaPosX == -1 &&
+    deltaPosY == -1 &&
+    board[Math.round(initialBallPositionY - 1)][
+      Math.round(initialBallPositionX - 1)
+    ].isWall
+  )
+    return [initialBallPositionX, initialBallPositionY];
+
+  // edge case, top right at start going 1 tile top right
+  if (
+    deltaPosX == 1 &&
+    deltaPosY == -1 &&
+    board[Math.round(initialBallPositionY - 1)][
+      Math.round(initialBallPositionX + 1)
+    ].isWall
+  )
+    return [initialBallPositionX, initialBallPositionY];
+
   // will iterate from final position to initial position
   for (let i = 1; i < maxDelta; i++) {
     try {
       if (board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall) {
-        if (deltaPosX > deltaPosY) {
+        if (Math.abs(deltaPosX) > Math.abs(deltaPosY)) {
+          console.log("xx");
+
           ballPositionY = Math.round(
             initialBallPositionY + deltaPosY / (i + 1)
           );
           ballPositionX -= deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
-        } else if (deltaPosX < deltaPosY) {
+        } else if (Math.abs(deltaPosX) < Math.abs(deltaPosY)) {
+          console.log("xxx");
           ballPositionX = Math.round(
             initialBallPositionX + deltaPosX / (i + 1)
           );
@@ -193,16 +240,17 @@ let findClosestNonWall = (
       try {
         if (
           i == maxDelta - 1 &&
-          board[Math.round(initialBallPositionY + deltaPosY / i)][
-            Math.round(initialBallPositionY + deltaPosY / i)
-          ].isWall
+          board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall
         ) {
           console.log("finally try");
           return [initialBallPositionX, initialBallPositionY];
         }
       } catch (error) {
         console.log("finally error");
-        if (i == maxDelta - 1)
+        if (
+          i == maxDelta - 1 &&
+          board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall
+        )
           return [initialBallPositionX, initialBallPositionY];
       }
 
@@ -226,6 +274,7 @@ let findClosestNonWall = (
   //   ballPositionX = initialBallPositionX;
   //   ballPositionY = initialBallPositionY;
   // }
+  console.log(ballPositionX, ballPositionY);
   return [ballPositionX, ballPositionY];
 };
 
@@ -312,7 +361,7 @@ let velocityAfterWall = (
     board[Math.round(ballPositionY - 1)][Math.round(ballPositionX + 1)].isWall
   ) {
     //Case 1: (-x, +y) (bottom-left)
-    if (velocityX < 0 && velocityY > 0) {
+    if (velocityX < 0 && velocityY >= 0) {
       console.log("case 1");
       while (
         board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall
@@ -404,7 +453,7 @@ let velocityAfterWall = (
       }
     }
     //Case 2: (+x, +y) (bottom-right)
-    else if (velocityX > 0 && velocityY > 0) {
+    else if (velocityX > 0 && velocityY >= 0) {
       console.log("case 2");
 
       while (
@@ -524,7 +573,7 @@ let velocityAfterWall = (
             startAboveWall
           );
         velocityY =
-          -0.8 *
+          0.8 *
           velocityFinal(
             velocityY,
             gravity,
@@ -581,7 +630,7 @@ let velocityAfterWall = (
             startAboveWall
           );
         velocityY =
-          -0.8 *
+          0.8 *
           velocityFinal(
             velocityY,
             gravity,

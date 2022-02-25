@@ -98,9 +98,16 @@ let BouncingSimulator = () => {
   }, []);
 
   let handleMouseDown = (row, col) => {
-    setBoard(wallCell(board, row, col));
-    setMousePressed(true);
-    console.log("x:", col, "y:", row);
+    if (
+      row != "0" ||
+      col != "0" ||
+      row != BOARD_ROW - 1 ||
+      col != BOARD_COL - 1
+    ) {
+      setBoard(wallCell(board, row, col));
+      setMousePressed(true);
+      console.log("x:", col, "y:", row);
+    }
   };
 
   let handleMouseUp = () => {
