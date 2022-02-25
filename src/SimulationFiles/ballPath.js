@@ -161,7 +161,9 @@ let findClosestNonWall = (
   // see case 10
   let deltaPosX = ballPositionX - initialBallPositionX;
   let deltaPosY = ballPositionY - initialBallPositionY;
-  let maxDelta = Math.max(Math.abs(deltaPosX), Math.max(deltaPosY));
+  let maxDelta = Math.max(Math.abs(deltaPosX), Math.abs(deltaPosY));
+
+  console.log(Math.max(deltaPosY));
 
   // edge case, bottom right at start going 1 tile right
   if (
