@@ -3,17 +3,33 @@
     height: 25px;
     outline: 1px solid grey;
     display: inline-block;
-}
+
 
 .cell-target {
-    background-color: black;
+    background-image: url(target.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    animation-name: specialNodes;
+    animation-duration: 2.0s;
+    animation-timing-function: ease-out;
+    animation-delay: 0;
+    animation-direction: alternate;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-play-state: running;
+  
 }
 
 .cell-ball {
-    background-color: green;
-    border-radius: 50%;
+    /* background-color: green;
+    border-radius: 50%; */
+    background-image: url(ball.png);
+    background-position: center;
+    background-size: contain;
 }
 
 .cell-wall {
-    background-color: rgb(12, 53, 71);
-}
+    background-image: url(wall.png);
+    background-position: center;
+    background-size: contain;}

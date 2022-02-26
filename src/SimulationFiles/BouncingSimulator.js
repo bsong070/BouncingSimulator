@@ -13,12 +13,9 @@ const TARGET_ROW = 18;
 
 const GRAVITY = 1; // using 1 instead of 9.8 to for cleaner visualization
 const WIND = 0; // will act as horizontal acceleration
-const FRAME = 25; // will act as time
+const FRAME = 100; // will act as time
 const VELOCITYX = 0;
 const VELOCITYY = 0;
-// const INITIALANGLEMULTIPLIER = 3; // to set initial angle to 90
-// const DEGREETORADIAN = Math.PI / 180;
-// const ANGLE = 30;
 
 let visualizationDelay;
 
@@ -48,6 +45,7 @@ let boardCell = (col, row, isEdge) => {
       atTarget: col == TARGET_COL && row == TARGET_ROW,
       previousPath: false,
       isWall: true,
+      //   isStart: false,
     };
   }
   return {
@@ -57,6 +55,7 @@ let boardCell = (col, row, isEdge) => {
     atTarget: col == TARGET_COL && row == TARGET_ROW,
     previousPath: false,
     isWall: false,
+    // isStart: col == BALL_START_COL && row == BALL_START_ROW,
     aboveWall: false, // will use this to determine if ball stays at 0 velocity permanently
   };
 };
@@ -99,22 +98,38 @@ let BouncingSimulator = () => {
 
   let handleMouseDown = (row, col) => {
     if (
-      row != "0" ||
-      col != "0" ||
-      row != BOARD_ROW - 1 ||
-      col != BOARD_COL - 1
-    ) {
-      setBoard(wallCell(board, row, col));
-      setMousePressed(true);
-      console.log("x:", col, "y:", row);
-    }
+      row == "0" ||
+      col == "0" ||
+      row == BOARD_ROW - 1 ||
+      col == BOARD_COL - 1
+    )
+      return;
+
+    setBoard(wallCell(board, row, col));
+    setMousePressed(true);
+    console.log("x:", col, "y:", row);
   };
 
-  let handleMouseUp = () => {
+  let handleMouseUp = (row, col) => {
+    // prevents removing walls at edge
+    if (
+      row == "0" ||
+      col == "0" ||
+      row == BOARD_ROW - 1 ||
+      col == BOARD_COL - 1
+    )
+      return;
     setMousePressed(false);
   };
 
   let handleMouseEnter = (row, col) => {
+    if (
+      row == "0" ||
+      col == "0" ||
+      row == BOARD_ROW - 1 ||
+      col == BOARD_COL - 1
+    )
+      return;
     if (!mousePressed) return;
     setBoard(wallCell(board, row, col));
   };
@@ -146,12 +161,6 @@ let BouncingSimulator = () => {
     let { id, value } = event.target;
     console.log(value);
 
-    // if (id == "angle") {
-    //   setIncrement((prevState) => ({
-    //     ...prevState,
-    //     [id]: value * ANGLE,
-    //   }));
-    // } else {
     setIncrement((prevState) => ({
       ...prevState,
       [id]: value,
@@ -168,7 +177,6 @@ let BouncingSimulator = () => {
       frames: FRAME,
       velocityX: VELOCITYX,
       velocityY: VELOCITYY,
-      // angle: ANGLE * INITIALANGLEMULTIPLIER,
     });
     setBoard(getBoard());
     setMousePressed(false);
@@ -178,11 +186,9 @@ let BouncingSimulator = () => {
 
   return (
     <div class="container">
-      {" "}
       {board.map((row, rowIndex) => {
         return (
           <div key={rowIndex}>
-            {" "}
             {row.map((cell, cellIndex) => {
               let { row, col, previousPath, isWall, isBall, atTarget } = cell;
               return (
@@ -197,16 +203,16 @@ let BouncingSimulator = () => {
                   mouseIsPressed={mousePressed}
                   onMouseDown={(row, col) => handleMouseDown(row, col)}
                   onMouseEnter={(row, col) => handleMouseEnter(row, col)}
-                  onMouseUp={() => handleMouseUp()}
+                  onMouseUp={(row, col) => handleMouseUp(row, col)}
                 />
               );
-            })}{" "}
+            })}
           </div>
         );
-      })}{" "}
+      })}
       <label for="customRange2" class="form-label">
-        <h3> Gravity: {increment.gravity} </h3>{" "}
-      </label>{" "}
+        <h3> Gravity: {increment.gravity} </h3>
+      </label>
       <input
         type="range"
         class="form-range"
@@ -217,8 +223,8 @@ let BouncingSimulator = () => {
         onChange={setSlider}
       ></input>
       <label for="customRange2" class="form-label">
-        <h3> Wind: {increment.wind} </h3>{" "}
-      </label>{" "}
+        <h3> Wind: {increment.wind} </h3>
+      </label>
       <input
         type="range"
         class="form-range"
@@ -227,34 +233,34 @@ let BouncingSimulator = () => {
         id="wind"
         defaultValue="0"
         onChange={setSlider}
-      ></input>{" "}
+      ></input>
       <label for="customRange2" class="form-label">
-        <h3> Frames: {increment.frames} </h3>{" "}
-      </label>{" "}
+        <h3> Frames: {increment.frames} </h3>
+      </label>
       <input
         type="range"
         class="form-range"
         min="1"
-        max="49"
+        max="200"
         id="frames"
-        defaultValue="25"
+        defaultValue="100"
         onChange={setSlider}
-      ></input>{" "}
+      ></input>
       <label for="customRange2" class="form-label">
-        <h3> Velocity X: {increment.velocityX} </h3>{" "}
-      </label>{" "}
+        <h3> Velocity X: {increment.velocityX} </h3>
+      </label>
       <input
         type="range"
         class="form-range"
-        min="-2"
-        max="2"
+        min="-3"
+        max="3"
         id="velocityX"
         defaultValue="0"
         onChange={setSlider}
-      ></input>{" "}
+      ></input>
       <label for="customRange2" class="form-label">
-        <h3> Velocity Y: {increment.velocityY} </h3>{" "}
-      </label>{" "}
+        <h3> Velocity Y: {increment.velocityY} </h3>
+      </label>
       <input
         type="range"
         class="form-range"
@@ -269,11 +275,11 @@ let BouncingSimulator = () => {
         class="btn btn-primary"
         onClick={() => visualizeBall()}
       >
-        Start{" "}
-      </button>{" "}
+        Start
+      </button>
       <button type="button" class="btn btn-primary" onClick={() => reset()}>
-        Reset{" "}
-      </button>{" "}
+        Reset
+      </button>
     </div>
   );
 };

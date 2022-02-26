@@ -71,24 +71,12 @@ let ballPath = (
 
     console.log("xxxx", ballPositionRow, ballPositionCol);
 
-    //check for out of bounds and end if true
-
-    // if (
-    //   Math.round(ballPositionCol) < 0 ||
-    //   Math.round(ballPositionCol) > board.length ||
-    //   Math.round(ballPositionRow) < 0 ||
-    //   Math.round(ballPositionRow) > board[0].length // may need to change
-    // )
-    //   time = frame;
-
-    let isOutOfBound = false;
-
     // temp holder, need to determine if ball went out of bounds, if yes need to calculate new velocity else keep temp
 
     let velocityYNoWall = velocityFinalWithTime(velocityY, gravity, time);
     let velocityXNoWall = velocityFinalWithTime(velocityX, wind, time);
 
-    [ballPositionCol, ballPositionRow, velocityX, velocityY, isOutOfBound] =
+    [ballPositionCol, ballPositionRow, velocityX, velocityY] =
       velocityAfterWall(
         board,
         Math.round(initialBallPositionCol),
@@ -101,7 +89,9 @@ let ballPath = (
         velocityYNoWall,
         gravity,
         wind,
-        startAboveWall
+        startAboveWall,
+        targetPositionCol,
+        targetPositionRow
       );
 
     console.log(
@@ -114,7 +104,6 @@ let ballPath = (
       "dy final",
       ballPositionRow
     );
-    // console.log("outofbound:", isOutOfBound);
 
     // use distance formula to determine velocity final, CANNOT be dependent on time else use velocity from time
 
@@ -128,8 +117,6 @@ let ballPath = (
     // }
     // ballPositionCol = ballPositionX;
     // ballPositionRow = ballPositionY;
-
-    if (isOutOfBound) return pathHistory;
 
     // [velocityX, velocityY] = velocityAfterWall(
     //     board,
@@ -155,15 +142,17 @@ let findClosestNonWall = (
   initialBallPositionX,
   initialBallPositionY,
   ballPositionX,
-  ballPositionY
+  ballPositionY,
+  targetPositionX,
+  targetPositionY
 ) => {
   // will use this in the edge case the ball jumps over a wall
   // see case 10
   let deltaPosX = ballPositionX - initialBallPositionX;
   let deltaPosY = ballPositionY - initialBallPositionY;
   let maxDelta = Math.max(Math.abs(deltaPosX), Math.abs(deltaPosY));
-
-  console.log(Math.max(deltaPosY));
+  let tempBallPositionX = ballPositionX;
+  let tempBallPositionY = ballPositionY;
 
   // edge case, bottom right at start going 1 tile right
   if (
@@ -207,52 +196,84 @@ let findClosestNonWall = (
 
   // will iterate from final position to initial position
   for (let i = 1; i < maxDelta; i++) {
+    console.log(
+      i,
+      "tempx",
+      tempBallPositionX,
+      "tempy",
+      tempBallPositionY,
+      "x",
+      ballPositionX,
+      "y",
+      ballPositionY
+    );
+
+    // if ball at target, end
+    if (
+      Math.round(ballPositionX) == targetPositionX &&
+      Math.round(ballPositionY) == targetPositionY
+    )
+      return [targetPositionX, targetPositionY];
+
     try {
       if (board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall) {
         if (Math.abs(deltaPosX) > Math.abs(deltaPosY)) {
-          console.log("xx");
-
-          ballPositionY = Math.round(
+          tempBallPositionY = Math.round(
             initialBallPositionY + deltaPosY / (i + 1)
           );
-          ballPositionX -= deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
+          tempBallPositionX = ballPositionX - deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
         } else if (Math.abs(deltaPosX) < Math.abs(deltaPosY)) {
-          console.log("xxx");
-          ballPositionX = Math.round(
+          tempBallPositionX = Math.round(
             initialBallPositionX + deltaPosX / (i + 1)
           );
-          ballPositionY -= deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
-        } else if (deltaPosX == deltaPosY) {
-          ballPositionY -= deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
-          ballPositionX -= deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
+          tempBallPositionY = ballPositionY - deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
+        } else if (Math.abs(deltaPosX) == Math.abs(deltaPosY)) {
+          tempBallPositionY = ballPositionY - deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
+          tempBallPositionX = ballPositionX - deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
         }
       }
     } catch (error) {
-      if (deltaPosX > deltaPosY) {
+      console.log(ballPositionX, ballPositionY);
+      if (Math.abs(deltaPosX) > Math.abs(deltaPosY)) {
+        tempBallPositionY = Math.round(
+          initialBallPositionY + deltaPosY / (i + 1)
+        );
+        tempBallPositionX = ballPositionX - deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
+      } else if (Math.abs(deltaPosX) < Math.abs(deltaPosY)) {
+        tempBallPositionX = Math.round(
+          initialBallPositionX + deltaPosX / (i + 1)
+        );
+        tempBallPositionY = ballPositionY - deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
+      } else if (Math.abs(deltaPosX) == Math.abs(deltaPosY)) {
+        tempBallPositionY = ballPositionY - deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
+        tempBallPositionX = ballPositionX - deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
+      }
+    } finally {
+      if (Math.abs(deltaPosX) > Math.abs(deltaPosY)) {
         ballPositionY = Math.round(initialBallPositionY + deltaPosY / (i + 1));
         ballPositionX -= deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
-      } else if (deltaPosX < deltaPosY) {
+      } else if (Math.abs(deltaPosX) < Math.abs(deltaPosY)) {
         ballPositionX = Math.round(initialBallPositionX + deltaPosX / (i + 1));
         ballPositionY -= deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
-      } else if (deltaPosX == deltaPosY) {
+      } else if (Math.abs(deltaPosX) == Math.abs(deltaPosY)) {
         ballPositionY -= deltaPosY / Math.abs(deltaPosY); // this is to make sure negative signs are captured
         ballPositionX -= deltaPosX / Math.abs(deltaPosX); // this is to make sure negative signs are captured
       }
-    } finally {
       try {
+        if (
+          Math.round(ballPositionX) == targetPositionX &&
+          Math.round(ballPositionY) == targetPositionY
+        )
+          return [targetPositionX, targetPositionY];
+
         if (
           i == maxDelta - 1 &&
           board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall
         ) {
-          console.log("finally try");
           return [initialBallPositionX, initialBallPositionY];
         }
       } catch (error) {
-        console.log("finally error");
-        if (
-          i == maxDelta - 1 &&
-          board[Math.round(ballPositionY)][Math.round(ballPositionX)].isWall
-        )
+        if (i == maxDelta - 1)
           return [initialBallPositionX, initialBallPositionY];
       }
 
@@ -266,43 +287,10 @@ let findClosestNonWall = (
       );
     }
   }
-  // last check to avoid out of bounds
-  // if (
-  //   ballPositionX < 0 ||
-  //   ballPositionX >= board.length ||
-  //   ballPositionY < 0 ||
-  //   ballPositionY >= board[0].length
-  // ) {
-  //   ballPositionX = initialBallPositionX;
-  //   ballPositionY = initialBallPositionY;
-  // }
+
   console.log(ballPositionX, ballPositionY);
-  return [ballPositionX, ballPositionY];
+  return [tempBallPositionX, tempBallPositionY];
 };
-
-// let findClosestNonWall = (
-//   board,
-//   initialBallPositionX,
-//   initialBallPositionY,
-//   ballPositionX,
-//   ballPositionY
-// ) => {
-//   // will use this in the edge case the ball jumps over a wall
-//   // see case 10
-//   let absDeltaPosX = Math.abs(ballPositionX - initialBallPositionX);
-//   let absDeltaPosY = Math.abs(ballPositionY - initialBallPositionY);
-//   let maxDelta = Math.max(absDeltaPosX, absDeltaPosY);
-
-//   for (let i = maxDelta; i > 0; i--) {
-//     if (
-//       board[Math.round(ballPositionY / i)][Math.round(ballPositionX / i)].isWall
-//     ) {
-//       ballPositionY = Math.round(ballPositionY / i);
-//       ballPositionX = Math.round(ballPositionX / i);
-//     }
-//   }
-//   return [ballPositionX, ballPositionY];
-// };
 
 let velocityAfterWall = (
   board,
@@ -316,9 +304,10 @@ let velocityAfterWall = (
   velocityYNoWall,
   gravity,
   wind,
-  startAboveWall
+  startAboveWall,
+  targetPositionX,
+  targetPositionY
 ) => {
-  let isOutOfBound;
   // if (
   //   ballPositionY >= board[0].length ||
   //   ballPositionX >= board.length ||
@@ -326,14 +315,12 @@ let velocityAfterWall = (
   //   ballPositionX < 0
   // ) {
   //   console.log("left board");
-  //   isOutOfBound = true;
 
   //   return [
   //     ballPositionX,
   //     ballPositionY,
   //     velocityXNoWall,
   //     velocityYNoWall,
-  //     isOutOfBound,
   //   ];
   // }
   // if leaves the board, end
@@ -345,7 +332,9 @@ let velocityAfterWall = (
     initialBallPositionX,
     initialBallPositionY,
     ballPositionX,
-    ballPositionY
+    ballPositionY,
+    targetPositionX,
+    targetPositionY
   );
 
   //*** in this board, right / down are positive, up / left are negative ***
@@ -946,8 +935,7 @@ let velocityAfterWall = (
     velocityX = velocityXNoWall;
     velocityY = velocityYNoWall;
   }
-  isOutOfBound = false;
-  return [ballPositionX, ballPositionY, velocityX, velocityY, isOutOfBound];
+  return [ballPositionX, ballPositionY, velocityX, velocityY];
 };
 
 let velocityFinalWithTime = (
