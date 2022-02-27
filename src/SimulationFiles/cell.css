@@ -1,24 +1,23 @@
+.container-bg {
+    background-color: #e6ffe6;
+    height: 100vh;
+}
+
+.board {
+    font-size: 0px;
+}
+
 .cell {
     width: 25px;
     height: 25px;
     outline: 1px solid grey;
     display: inline-block;
-
+}
 
 .cell-target {
     background-image: url(target.png);
     background-position: center;
-    background-repeat: no-repeat;
     background-size: contain;
-    animation-name: specialNodes;
-    animation-duration: 2.0s;
-    animation-timing-function: ease-out;
-    animation-delay: 0;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
-  
 }
 
 .cell-ball {
@@ -29,7 +28,29 @@
     background-size: contain;
 }
 
+.cell-previous {
+    border-radius: 50%;
+    background-color: lightgray;
+}
+
+.cell-start {
+    background-color: green;
+    border-radius: 50%;
+        background-position: center;
+    background-size: contain;
+}
+
 .cell-wall {
     background-image: url(wall.png);
     background-position: center;
-    background-size: contain;}
+    background-size: contain;
+
+}
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+  }

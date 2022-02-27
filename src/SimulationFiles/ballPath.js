@@ -11,8 +11,6 @@ let ballPath = (
   velocityY,
   startAboveWall // will be used to set velocity y to 0 or not
 ) => {
-  //   board.length 20
-  //   board[0].length 40
   let pathHistory = [];
   let time = 1;
 
@@ -26,16 +24,6 @@ let ballPath = (
   velocityX = parseInt(velocityX);
   velocityY = parseInt(velocityY);
 
-  // while (
-  //     (Math.round(ballPositionRow) != targetPositionRow ||
-  //         Math.round(ballPositionCol) != targetPositionCol) &&
-  //     (Math.round(ballPositionCol) > 0 ||
-  //         Math.round(ballPositionCol) < board.length - 1 ||
-  //         Math.round(ballPositionRow) > 0 ||
-  //         Math.round(ballPositionRow) < board[0].length - 1 // may need to change
-  //     ) &&
-  //     time <= frame
-  // ) {
   while (
     (Math.round(ballPositionRow) != targetPositionRow ||
       Math.round(ballPositionCol) != targetPositionCol) &&
@@ -105,26 +93,6 @@ let ballPath = (
       ballPositionRow
     );
 
-    // use distance formula to determine velocity final, CANNOT be dependent on time else use velocity from time
-
-    // if (wasAtWall) {
-    //     velocityX = (tempVelocityX, gravity, ballPositionCol, ballPositionX)
-    //     velocityY = (tempVelocityY, wind, ballPositionRow, ballPositionY)
-
-    // } else {
-    //     velocityX = velocityXNoWall;
-    //     velocityY = velocityYNoWall;
-    // }
-    // ballPositionCol = ballPositionX;
-    // ballPositionRow = ballPositionY;
-
-    // [velocityX, velocityY] = velocityAfterWall(
-    //     board,
-    //     Math.round(ballPositionCol), // need whole numbers for cell properties
-    //     Math.round(ballPositionRow),
-    //     velocityX,
-    //     velocityY
-    // );
     board[Math.round(ballPositionRow)][
       Math.round(ballPositionCol)
     ].isBall = true;
@@ -308,23 +276,6 @@ let velocityAfterWall = (
   targetPositionX,
   targetPositionY
 ) => {
-  // if (
-  //   ballPositionY >= board[0].length ||
-  //   ballPositionX >= board.length ||
-  //   ballPositionY < 0 ||
-  //   ballPositionX < 0
-  // ) {
-  //   console.log("left board");
-
-  //   return [
-  //     ballPositionX,
-  //     ballPositionY,
-  //     velocityXNoWall,
-  //     velocityYNoWall,
-  //   ];
-  // }
-  // if leaves the board, end
-
   // will use this in the edge case the ball jumps over a wall
   // see case 10
   [ballPositionX, ballPositionY] = findClosestNonWall(
