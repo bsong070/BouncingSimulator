@@ -3,12 +3,16 @@ import Cell from "./Cell";
 import ballPath from "./ballPath";
 import "./cell.css";
 
+let randomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 const BOARD_ROW = 40;
 const BOARD_COL = 30; //20
-const BALL_START_COL = 10;
-const BALL_START_ROW = 18;
-const TARGET_COL = 35;
-const TARGET_ROW = 18;
+const BALL_START_COL = randomInt(1, 9);
+const BALL_START_ROW = randomInt(1, 19);
+const TARGET_COL = randomInt(30, 38);
+const TARGET_ROW = randomInt(1, 28);
 
 const GRAVITY = 1; // using 1 instead of 9.8 to for cleaner visualization
 const WIND = 0; // will act as horizontal acceleration

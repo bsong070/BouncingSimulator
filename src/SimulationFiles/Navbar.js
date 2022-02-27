@@ -43,7 +43,7 @@ const Navbar = () => {
               aria-controls="pills-notes"
               aria-selected="false"
             >
-              Notes
+              My Notes
             </a>
           </li>
         </ul>
