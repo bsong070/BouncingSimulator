@@ -17,6 +17,7 @@ const VELOCITYX = 0;
 const VELOCITYY = 0;
 
 let visualizationDelay = [];
+let pathHistory;
 
 // creates the board
 let getBoard = () => {
@@ -140,7 +141,7 @@ let BouncingSimulator = () => {
   };
 
   let visualizeBall = () => {
-    let pathHistory = ballPath(
+    pathHistory = ballPath(
       board,
       BALL_START_COL,
       BALL_START_ROW,
@@ -179,34 +180,25 @@ let BouncingSimulator = () => {
     }));
   };
 
-  // clear states to initial and stops visualize if in progress
+  // one reset was not clearing all of the previous classnames, needed to call multiple times
   let reset = () => {
-    // document.getElementById(
-    //     `cell-${pathHistory[i - 1].row}-${pathHistory[i - 1].col}`
-    //   ).className = "cell cell-previous";
+    for (let i = 0; i < 10; i++) resetReset();
+  };
 
-    //   document.getElementById(
-    //     `cell-${pathHistory[i].row}-${pathHistory[i].col}`
-    //   ).className = "cell cell-ball";
-    // }, 300 * i)
+  // clear states to initial and stops visualize if in progress
+  let resetReset = () => {
+    const elementsPrev = document.getElementsByClassName("cell cell-previous");
+    for (let i = 0; i < elementsPrev.length; i++)
+      elementsPrev[i].className = "cell";
 
-    // board.forEach((item) =>
-    // item.forEach(index) => )
-
-    // board.forEach((i) =>
-    //   i.forEach((j) => board[i][j].classList.remove("cell cell-previous"))
-    // );
+    const elementBall = document.getElementsByClassName("cell cell-ball");
+    for (let i = 0; i < elementBall.length; i++)
+      elementBall[i].className = "cell";
 
     visualizationDelay.forEach((timer) => clearTimeout(timer));
 
     setBoard(getBoard());
-    setIncrement({
-      gravity: GRAVITY,
-      wind: WIND,
-      frames: FRAME,
-      velocityX: VELOCITYX,
-      velocityY: VELOCITYY,
-    });
+
     setMousePressed(false);
   };
 
@@ -314,7 +306,7 @@ let BouncingSimulator = () => {
                 Start
               </button>
               <button
-                type="button"
+                type="reset"
                 class="col btn btn-danger"
                 onClick={() => reset()}
               >
