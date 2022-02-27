@@ -16,7 +16,7 @@ const FRAME = 100; // will act as time
 const VELOCITYX = 0;
 const VELOCITYY = 0;
 
-let visualizationDelay;
+let visualizationDelay = [];
 
 // creates the board
 let getBoard = () => {
@@ -155,15 +155,17 @@ let BouncingSimulator = () => {
     );
 
     for (let i = 0; i < pathHistory.length; i++) {
-      visualizationDelay = setTimeout(() => {
-        document.getElementById(
-          `cell-${pathHistory[i - 1].row}-${pathHistory[i - 1].col}`
-        ).className = "cell cell-previous";
+      visualizationDelay.push(
+        setTimeout(() => {
+          document.getElementById(
+            `cell-${pathHistory[i - 1].row}-${pathHistory[i - 1].col}`
+          ).className = "cell cell-previous";
 
-        document.getElementById(
-          `cell-${pathHistory[i].row}-${pathHistory[i].col}`
-        ).className = "cell cell-ball";
-      }, 300 * i);
+          document.getElementById(
+            `cell-${pathHistory[i].row}-${pathHistory[i].col}`
+          ).className = "cell cell-ball";
+        }, 300 * i)
+      );
     }
   };
 
@@ -179,8 +181,25 @@ let BouncingSimulator = () => {
 
   // clear states to initial and stops visualize if in progress
   let reset = () => {
-    clearTimeout(visualizationDelay);
+    // document.getElementById(
+    //     `cell-${pathHistory[i - 1].row}-${pathHistory[i - 1].col}`
+    //   ).className = "cell cell-previous";
 
+    //   document.getElementById(
+    //     `cell-${pathHistory[i].row}-${pathHistory[i].col}`
+    //   ).className = "cell cell-ball";
+    // }, 300 * i)
+
+    // board.forEach((item) =>
+    // item.forEach(index) => )
+
+    // board.forEach((i) =>
+    //   i.forEach((j) => board[i][j].classList.remove("cell cell-previous"))
+    // );
+
+    visualizationDelay.forEach((timer) => clearTimeout(timer));
+
+    setBoard(getBoard());
     setIncrement({
       gravity: GRAVITY,
       wind: WIND,
@@ -188,122 +207,119 @@ let BouncingSimulator = () => {
       velocityX: VELOCITYX,
       velocityY: VELOCITYY,
     });
-    setBoard(getBoard());
     setMousePressed(false);
   };
 
   // add ball current
 
   return (
-    <div className="container-bg vertical-center">
-      <div class="container">
-        <div class="row align-items-center h-100">
-          <div class="col-10">
-            {board.map((row, rowIndex) => {
-              return (
-                <div className="board" key={rowIndex}>
-                  {row.map((cell, cellIndex) => {
-                    let { row, col, isWall, isBall, atTarget, isStart } = cell;
-                    return (
-                      <Cell
-                        key={cellIndex}
-                        row={row}
-                        col={col}
-                        isBall={isBall}
-                        atTarget={atTarget}
-                        isWall={isWall}
-                        isStart={isStart}
-                        mouseIsPressed={mousePressed}
-                        onMouseDown={(row, col) => handleMouseDown(row, col)}
-                        onMouseEnter={(row, col) => handleMouseEnter(row, col)}
-                        onMouseUp={(row, col) => handleMouseUp(row, col)}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-          <div class="col-2">
-            <label for="velocityX" class="form-label">
-              <h5> Initial Velocity X: {increment.velocityX} </h5>
-            </label>
-            <input
-              type="range"
-              class="form-range"
-              min="-3"
-              max="3"
-              id="velocityX"
-              defaultValue="0"
-              onChange={setSlider}
-            ></input>
-            <label for="velocityY" class="form-label">
-              <h5> Initial Velocity Y: {increment.velocityY} </h5>
-            </label>
-            <input
-              type="range"
-              class="form-range"
-              min="-3"
-              max="3"
-              id="velocityY"
-              defaultValue="0"
-              onChange={setSlider}
-            ></input>
-            <label for="wind" class="form-label">
-              <h5> Acceleration X: {increment.wind} </h5>
-            </label>
-            <input
-              type="range"
-              class="form-range"
-              min="-2"
-              max="2"
-              id="wind"
-              defaultValue="0"
-              onChange={setSlider}
-            ></input>
-            <label for="gravity" class="form-label">
-              <h5> Acceleration Y: {increment.gravity} </h5>
-            </label>
-            <input
-              type="range"
-              class="form-range"
-              min="0"
-              max="3"
-              id="gravity"
-              defaultValue="1"
-              onChange={setSlider}
-            ></input>
-            <label for="frames" class="form-label">
-              <h5> Time: {increment.frames} </h5>
-            </label>
-            <input
-              type="range"
-              class="form-range"
-              min="1"
-              max="200"
-              id="frames"
-              defaultValue="100"
-              onChange={setSlider}
-            ></input>
-            <br></br>
-            <br></br>
-            <div class="container">
-              <div class="row justify-content-start">
-                <button
-                  type="button"
-                  class="col 1 btn btn-secondary"
-                  onClick={() => visualizeBall()}
-                >
-                  Start
-                </button>
-                <button
-                  type="button"
-                  class="col btn btn-danger"
-                  onClick={() => reset()}
-                >
-                  Reset
-                </button>
+    <div class="container">
+      <div class="row align-items-center h-100">
+        <div class="col-10">
+          {board.map((row, rowIndex) => {
+            return (
+              <div className="board" key={rowIndex}>
+                {row.map((cell, cellIndex) => {
+                  let { row, col, isWall, isBall, atTarget, isStart } = cell;
+                  return (
+                    <Cell
+                      key={cellIndex}
+                      row={row}
+                      col={col}
+                      isBall={isBall}
+                      atTarget={atTarget}
+                      isWall={isWall}
+                      isStart={isStart}
+                      mouseIsPressed={mousePressed}
+                      onMouseDown={(row, col) => handleMouseDown(row, col)}
+                      onMouseEnter={(row, col) => handleMouseEnter(row, col)}
+                      onMouseUp={(row, col) => handleMouseUp(row, col)}
+                    />
+                  );
+                })}
               </div>
+            );
+          })}
+        </div>
+        <div class="col-2">
+          <label for="velocityX" class="form-label">
+            <h5> Initial Velocity X: {increment.velocityX} </h5>
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            min="-3"
+            max="3"
+            id="velocityX"
+            defaultValue="0"
+            onChange={setSlider}
+          ></input>
+          <label for="velocityY" class="form-label">
+            <h5> Initial Velocity Y: {increment.velocityY} </h5>
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            min="-3"
+            max="3"
+            id="velocityY"
+            defaultValue="0"
+            onChange={setSlider}
+          ></input>
+          <label for="wind" class="form-label">
+            <h5> Acceleration X: {increment.wind} </h5>
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            min="-2"
+            max="2"
+            id="wind"
+            defaultValue="0"
+            onChange={setSlider}
+          ></input>
+          <label for="gravity" class="form-label">
+            <h5> Acceleration Y: {increment.gravity} </h5>
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            min="0"
+            max="3"
+            id="gravity"
+            defaultValue="1"
+            onChange={setSlider}
+          ></input>
+          <label for="frames" class="form-label">
+            <h5> Time: {increment.frames} </h5>
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            min="1"
+            max="200"
+            id="frames"
+            defaultValue="100"
+            onChange={setSlider}
+          ></input>
+          <br></br>
+          <br></br>
+          <div class="container">
+            <div class="row justify-content-start">
+              <button
+                type="button"
+                class="col 1 btn btn-secondary"
+                onClick={() => visualizeBall()}
+              >
+                Start
+              </button>
+              <button
+                type="button"
+                class="col btn btn-danger"
+                onClick={() => reset()}
+              >
+                Reset
+              </button>
             </div>
           </div>
         </div>
