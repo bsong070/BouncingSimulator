@@ -42,6 +42,29 @@ let about = () => {
           </tr>
           <tr>
             <th scope="row">
+              <img className="about-image" src={require("./wallabout.jpg")} />
+            </th>
+            <td>Wall</td>
+            <td>
+              Click or hold on cells to add walls, the ball cannot pass through
+              a wall and will bounce
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <img className="about-image" src={require("./botleft.png")} />{" "}
+              <img className="about-image" src={require("./botright.png")} />{" "}
+              <img className="about-image" src={require("./topleft.png")} />{" "}
+              <img className="about-image" src={require("./topright.png")} />{" "}
+            </th>
+            <td>Hard Stops</td>
+            <td>
+              Ball will come to an end after hitting any of these scenarios, be
+              careful!
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
               <></>
             </th>
             <td>Velocity</td>

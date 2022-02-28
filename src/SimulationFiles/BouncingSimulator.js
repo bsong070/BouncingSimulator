@@ -9,6 +9,11 @@ let randomInt = (min, max) => {
 
 const BOARD_ROW = 40;
 const BOARD_COL = 30; //20
+
+// const BALL_START_COL = 10;
+// const BALL_START_ROW = 18;
+// const TARGET_COL = 35;
+// const TARGET_ROW = 18;
 const BALL_START_COL = randomInt(1, 9);
 const BALL_START_ROW = randomInt(1, 19);
 const TARGET_COL = randomInt(30, 38);
