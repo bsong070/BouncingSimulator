@@ -12,7 +12,7 @@ let about = () => {
         <tbody>
           <tr>
             <th scope="row">
-              <img className="about-image" src={require("./start.png")} />
+              <img className="about-image" src={require("./About/start.png")} />
             </th>
             <td>Start Position</td>
             <td>Ball starts here</td>
@@ -26,7 +26,10 @@ let about = () => {
           </tr>
           <tr>
             <th scope="row">
-              <img className="about-image" src={require("./previous.png")} />
+              <img
+                className="about-image"
+                src={require("./About/previous.png")}
+              />
             </th>
             <td>Previous Position</td>
             <td>
@@ -42,7 +45,10 @@ let about = () => {
           </tr>
           <tr>
             <th scope="row">
-              <img className="about-image" src={require("./wallabout.jpg")} />
+              <img
+                className="about-image"
+                src={require("./About/wallabout.jpg")}
+              />
             </th>
             <td>Wall</td>
             <td>
@@ -52,10 +58,22 @@ let about = () => {
           </tr>
           <tr>
             <th scope="row">
-              <img className="about-image" src={require("./botleft.png")} />{" "}
-              <img className="about-image" src={require("./botright.png")} />{" "}
-              <img className="about-image" src={require("./topleft.png")} />{" "}
-              <img className="about-image" src={require("./topright.png")} />{" "}
+              <img
+                className="about-image"
+                src={require("./About/botleft.png")}
+              />{" "}
+              <img
+                className="about-image"
+                src={require("./About/botright.png")}
+              />{" "}
+              <img
+                className="about-image"
+                src={require("./About/topleft.png")}
+              />{" "}
+              <img
+                className="about-image"
+                src={require("./About/topright.png")}
+              />{" "}
             </th>
             <td>Hard Stops</td>
             <td>
