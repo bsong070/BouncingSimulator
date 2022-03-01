@@ -1,10 +1,6 @@
-.carousel {
-    width:480px;
-    height:240px;
-  }
 
 .about-image {
-    max-width: 25px;
+    width: 25px;
 }
 
 .board {
@@ -12,8 +8,8 @@
 }
 
 .cell {
-    width: 22px;
-    height: 22px;
+    width: 25px;
+    height: 25px;
     outline: 1px solid grey;
     display: inline-block;
 }
@@ -25,8 +21,6 @@
 }
 
 .cell-ball {
-    /* background-color: green;
-    border-radius: 50%; */
     background-image: url(ball.png);
     background-position: center;
     background-size: contain;

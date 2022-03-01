@@ -78,8 +78,8 @@ let about = () => {
             </th>
             <td>Hard Stops</td>
             <td>
-              Ball will come to an end after hitting any of these scenarios, be
-              careful!
+              Ball will come to an end after hitting any of these scenarios on
+              the edge, be careful!
             </td>
           </tr>
           <tr>
