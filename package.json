@@ -1,4 +1,5 @@
 {
+  "homepage": "https://bsong070.github.io/BouncingSimulator",
   "name": "bouncingsimulator",
   "version": "0.1.0",
   "private": true,
@@ -13,7 +14,6 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "homepage": "https://bsong070.github.io/BouncingSimulator",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
