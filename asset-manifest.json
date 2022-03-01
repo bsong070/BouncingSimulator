@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/BouncingSimulator/static/css/main.40165b41.css",
+    "main.js": "/BouncingSimulator/static/js/main.99c310f3.js",
+    "static/media/BouncingSimulatorNotes.pdf": "/BouncingSimulator/static/media/BouncingSimulatorNotes.0fe7746f2f46e077b3e2.pdf",
+    "static/media/ball.png": "/BouncingSimulator/static/media/ball.b8578ed2f7f2e899c49d.png",
+    "static/media/wall.png": "/BouncingSimulator/static/media/wall.01b6f247569605db29c0.png",
+    "index.html": "/BouncingSimulator/index.html",
+    "main.40165b41.css.map": "/BouncingSimulator/static/css/main.40165b41.css.map",
+    "main.99c310f3.js.map": "/BouncingSimulator/static/js/main.99c310f3.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.40165b41.css",
+    "static/js/main.99c310f3.js"
+  ]
+}
