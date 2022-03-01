@@ -53,7 +53,8 @@ let about = () => {
             <td>Wall</td>
             <td>
               Click or hold on cells to add walls, the ball cannot pass through
-              a wall and will bounce
+              a premade wall and will bounce back. For manually made walls, the
+              ball can break them and pass through with the right force
             </td>
           </tr>
           <tr>

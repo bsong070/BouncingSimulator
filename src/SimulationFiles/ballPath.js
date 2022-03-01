@@ -33,21 +33,8 @@ let ballPath = (
       Math.floor(ballPositionRow) < board[0].length - 1) && // may need to change
     time <= frame
   ) {
-    console.log(
-      "vx:",
-      velocityX,
-      "vy:",
-      velocityY,
-      "dx:",
-      ballPositionCol,
-      "dy:",
-      ballPositionRow
-    );
-
     let initialBallPositionCol = ballPositionCol;
     let initialBallPositionRow = ballPositionRow;
-
-    console.log("xx", initialBallPositionRow, initialBallPositionCol);
 
     ballPositionRow = position(
       initialBallPositionRow,
@@ -63,8 +50,6 @@ let ballPath = (
       false,
       board
     );
-
-    console.log("xxxx", ballPositionRow, ballPositionCol);
 
     // temp holder, need to determine if ball went out of bounds, if yes need to calculate new velocity else keep temp
 
@@ -89,17 +74,6 @@ let ballPath = (
         targetPositionRow
       );
 
-    console.log(
-      "vx final:",
-      velocityX,
-      "vy final:",
-      velocityY,
-      "dx final:",
-      ballPositionCol,
-      "dy final",
-      ballPositionRow
-    );
-
     board[Math.floor(ballPositionRow)][
       Math.floor(ballPositionCol)
     ].isBall = true;
@@ -107,7 +81,6 @@ let ballPath = (
       board[Math.floor(ballPositionRow)][Math.floor(ballPositionCol)]
     );
     time++;
-    console.log(pathHistory);
   }
   return pathHistory;
 };
@@ -171,18 +144,6 @@ let findClosestNonWall = (
 
   // will iterate from final position to initial position
   for (let i = 1; i < maxDelta; i++) {
-    console.log(
-      i,
-      "tempx",
-      tempBallPositionX,
-      "tempy",
-      tempBallPositionY,
-      "x",
-      ballPositionX,
-      "y",
-      ballPositionY
-    );
-
     // if ball at target, end
 
     // need to add try catch, if ball's position initially or during the loop goes out of range, errors out
@@ -243,7 +204,6 @@ let findClosestNonWall = (
         }
       }
     } catch (error) {
-      console.log(ballPositionX, ballPositionY);
       if (Math.abs(deltaPosX) > Math.abs(deltaPosY)) {
         tempBallPositionY = Math.floor(
           initialBallPositionY + deltaPosY / (i + 1)
@@ -286,20 +246,8 @@ let findClosestNonWall = (
         if (i == maxDelta - 1)
           return [initialBallPositionX, initialBallPositionY];
       }
-
-      console.log(
-        "finally X:",
-        ballPositionX,
-        "Y:",
-        ballPositionY,
-        "initial y:",
-        initialBallPositionY
-      );
     }
   }
-
-  console.log(ballPositionX, ballPositionY);
-  console.log(tempBallPositionX, tempBallPositionY);
   return [tempBallPositionX, tempBallPositionY];
 };
 
@@ -337,21 +285,8 @@ let velocityAfterWall = (
   if (ballPositionX <= 1) ballPositionX = 1;
   if (ballPositionX >= board[0].length - 2) ballPositionX = board[0].length - 2;
 
-  if (
-    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall &&
-      board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall) ||
-    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall &&
-      board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall) ||
-    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall &&
-      board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall) ||
-    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall &&
-      board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall)
-  ) {
-    velocityX = 0;
-    velocityY = 0;
-  }
   //*** in this board, right / down are positive, up / left are negative ***
-  else if (
+  if (
     board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall ||
     board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall ||
     board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall ||
@@ -366,9 +301,6 @@ let velocityAfterWall = (
   ) {
     //Case 1: (-x, +y) (bottom-left)
     if (velocityX < 0 && velocityY >= 0) {
-      console.log("case 1");
-
-      // bottom left
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall
       ) {
@@ -430,8 +362,6 @@ let velocityAfterWall = (
     }
     //Case 2: (+x, +y) (bottom-right)
     else if (velocityX > 0 && velocityY >= 0) {
-      console.log("case 2");
-
       // bottom right - wall on right only, reverse x only, y velocity freefall still
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall
@@ -492,8 +422,6 @@ let velocityAfterWall = (
     }
     //Case 3: (+x, -y) (top-right)
     else if (velocityX > 0 && velocityY < 0) {
-      console.log("case 3");
-
       // top right - wall on right, reverse x velocity only
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall
@@ -508,6 +436,7 @@ let velocityAfterWall = (
             false,
             startAboveWall
           );
+        velocityY = -velocityY;
         // top right - wall on top, reverse y velocity only
       } else if (
         board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall
@@ -555,8 +484,6 @@ let velocityAfterWall = (
 
     //Case 4: (-x, -y) (top-left)
     else if (velocityX < 0 && velocityY < 0) {
-      console.log("case 4");
-
       // top left - wall on left, reverse x velocity only
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall
@@ -617,8 +544,6 @@ let velocityAfterWall = (
     }
     //Case 5: (+x, 0) (right) and gravity == 0
     else if (velocityX > 0 && velocityY == 0 && gravity == 0) {
-      console.log("case 5");
-
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall
       ) {
@@ -636,9 +561,6 @@ let velocityAfterWall = (
     }
     //Case 6: (-x, 0) (left)
     else if (velocityX < 0 && velocityY == 0 && gravity == 0) {
-      // working, add wind or gravity or wall?
-      console.log("case 6");
-
       if (
         board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall
       ) {
@@ -656,8 +578,6 @@ let velocityAfterWall = (
     }
     //Case 7: (0, +y) (down)
     else if (velocityX == 0 && velocityY >= 0) {
-      console.log("case 7");
-
       if (
         board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall
       ) {
@@ -675,12 +595,22 @@ let velocityAfterWall = (
     }
     //Case 8: (0, -y) (up)
     else if (velocityX == 0 && velocityY < 0) {
-      console.log("case 8");
       if (
         board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall
       ) {
         velocityY =
           0.45 *
+          velocityFinal(
+            velocityY,
+            gravity,
+            initialBallPositionY,
+            ballPositionY,
+            true,
+            startAboveWall
+          );
+      } else {
+        velocityY =
+          -0.45 *
           velocityFinal(
             velocityY,
             gravity,
@@ -697,8 +627,6 @@ let velocityAfterWall = (
 
     //Case 9: (+x, 0) (right) and gravity != 0
     else if (velocityX > 0 && velocityY == 0 && gravity != 0) {
-      console.log("case 9");
-
       // only reverse y if bottom is wall
       if (
         board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall
@@ -756,10 +684,6 @@ let velocityAfterWall = (
     }
     //Case 10: (-x, 0) (left) and gravity != 0
     else if (velocityX < 0 && velocityY == 0) {
-      // working, add wind or gravity or wall?
-      console.log("case 10");
-      console.log(velocityX);
-
       velocityX =
         0.45 *
         velocityFinal(
@@ -787,7 +711,19 @@ let velocityAfterWall = (
     velocityX = velocityXNoWall;
     velocityY = velocityYNoWall;
   }
-
+  if (
+    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall &&
+      board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall) ||
+    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX + 1)].isWall &&
+      board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall) ||
+    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall &&
+      board[Math.floor(ballPositionY + 1)][Math.floor(ballPositionX)].isWall) ||
+    (board[Math.floor(ballPositionY)][Math.floor(ballPositionX - 1)].isWall &&
+      board[Math.floor(ballPositionY - 1)][Math.floor(ballPositionX)].isWall)
+  ) {
+    velocityX = 0;
+    velocityY = 0;
+  }
   return [ballPositionX, ballPositionY, velocityX, velocityY];
 };
 
@@ -804,10 +740,9 @@ let velocityFinalWithTime = (
   // * time;
 };
 
-let position = (initialPosition, initialVelocity, acceleration, isY, board) => {
+let position = (initialPosition, initialVelocity, acceleration) => {
   return (
     //assume delta time is 1 as each frame is 1 second, so no time is required in equation
-
     //in case position is calculated out of bounds, scale back to bound to avoid errors
     initialPosition + initialVelocity + (1 / 2) * acceleration
   );

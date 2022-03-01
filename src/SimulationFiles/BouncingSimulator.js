@@ -116,7 +116,6 @@ let BouncingSimulator = () => {
 
     setBoard(wallCell(board, row, col));
     setMousePressed(true);
-    console.log("x:", col, "y:", row);
   };
 
   let handleMouseUp = (row, col) => {
@@ -181,8 +180,6 @@ let BouncingSimulator = () => {
 
   let setSlider = (event) => {
     let { id, value } = event.target;
-    console.log(value);
-
     setIncrement((prevState) => ({
       ...prevState,
       [id]: value,
@@ -286,7 +283,7 @@ let BouncingSimulator = () => {
             type="range"
             class="form-range"
             min="0"
-            max="3"
+            max="2"
             id="gravity"
             defaultValue="1"
             onChange={setSlider}

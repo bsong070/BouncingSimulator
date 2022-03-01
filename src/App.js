@@ -1,10 +1,9 @@
 import "./index.css";
-import BouncingSimulator from "./SimulationFiles/BouncingSimulator";
 import Navbar from "./SimulationFiles/Navbar";
 
 function App() {
   return (
-    <div className="App">
+    <div className="container-bg">
       <Navbar />
     </div>
   );
